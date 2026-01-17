@@ -1,0 +1,7 @@
+{
+  "name": "Copy of Copy of Copy of Nom Nom - Cheese-Themed Restaurant Finder",
+  "description": "A delicious restaurant recommendation engine that helps you find the cheesiest (and best) dining spots near you, featuring real-time location sorting and interactive maps.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

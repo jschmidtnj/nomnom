@@ -1,0 +1,99 @@
+
+[
+  {
+    "name": "State Bird Provisions",
+    "address": "1529 Fillmore St, San Francisco, CA 94115",
+    "lat": 37.7841,
+    "lng": -122.4330,
+    "cuisine": "American (Dim Sum Style)",
+    "rating": 4.8,
+    "priceLevel": "$$$",
+    "description": "An inventive, high-energy spot known for serving small plates dim-sum style from carts. Famous for their fried state bird with onion jam.",
+    "mapsUri": "https://www.google.com/maps/search/?api=1&query=State+Bird+Provisions+San+Francisco",
+    "imageUrl": "https://picsum.photos/seed/statebird/400/300"
+  },
+  {
+    "name": "Zuni Café",
+    "address": "1658 Market St, San Francisco, CA 94102",
+    "lat": 37.7736,
+    "lng": -122.4215,
+    "cuisine": "French-Italian",
+    "rating": 4.5,
+    "priceLevel": "$$$",
+    "description": "A legendary San Francisco institution famous for its wood-fired brick oven and iconic roasted chicken with warm bread salad.",
+    "mapsUri": "https://www.google.com/maps/search/?api=1&query=Zuni+Cafe+San+Francisco",
+    "imageUrl": "https://picsum.photos/seed/zunicafe/400/300"
+  },
+  {
+    "name": "Delfina",
+    "address": "3621 18th St, San Francisco, CA 94110",
+    "lat": 37.7614,
+    "lng": -122.4243,
+    "cuisine": "Italian",
+    "rating": 4.7,
+    "priceLevel": "$$",
+    "description": "A vibrant Mission District favorite serving farm-to-table Italian fare. Their spaghetti with plum tomatoes and garlic is a masterclass in simplicity.",
+    "mapsUri": "https://www.google.com/maps/search/?api=1&query=Delfina+San+Francisco",
+    "imageUrl": "https://picsum.photos/seed/delfina/400/300"
+  },
+  {
+    "name": "Nopa",
+    "address": "560 Divisadero St, San Francisco, CA 94117",
+    "lat": 37.7749,
+    "lng": -122.4375,
+    "cuisine": "California Rustic",
+    "rating": 4.6,
+    "priceLevel": "$$$",
+    "description": "A bustling North of the Panhandle spot specializing in organic wood-fired cuisine and one of the city's most celebrated burgers.",
+    "mapsUri": "https://www.google.com/maps/search/?api=1&query=Nopa+San+Francisco",
+    "imageUrl": "https://picsum.photos/seed/nopa/400/300"
+  },
+  {
+    "name": "Kokkari Estiatorio",
+    "address": "200 Jackson St, San Francisco, CA 94111",
+    "lat": 37.7969,
+    "lng": -122.3996,
+    "cuisine": "Greek",
+    "rating": 4.9,
+    "priceLevel": "$$$$",
+    "description": "An upscale rustic Greek restaurant that feels like a cozy Mediterranean inn. The grilled lamb chops are legendary.",
+    "mapsUri": "https://www.google.com/maps/search/?api=1&query=Kokkari+Estiatorio+San+Francisco",
+    "imageUrl": "https://picsum.photos/seed/kokkari/400/300"
+  },
+  {
+    "name": "Mister Jiu's",
+    "address": "28 Waverly Pl, San Francisco, CA 94108",
+    "lat": 37.7938,
+    "lng": -122.4061,
+    "cuisine": "Modern Chinese",
+    "rating": 4.6,
+    "priceLevel": "$$$$",
+    "description": "A Michelin-starred contemporary Chinese restaurant in the heart of Chinatown, blending traditional flavors with local Californian ingredients.",
+    "mapsUri": "https://www.google.com/maps/search/?api=1&query=Mister+Jius+San+Francisco",
+    "imageUrl": "https://picsum.photos/seed/misterjius/400/300"
+  },
+  {
+    "name": "Liholiho Yacht Club",
+    "address": "871 Sutter St, San Francisco, CA 94109",
+    "lat": 37.7884,
+    "lng": -122.4146,
+    "cuisine": "Hawaiian Fusion",
+    "rating": 4.7,
+    "priceLevel": "$$$",
+    "description": "A high-energy Heritage-driven restaurant serving food inspired by Hawaii, India, and China. Don't miss the tuna poke on nori crackers.",
+    "mapsUri": "https://www.google.com/maps/search/?api=1&query=Liholiho+Yacht+Club+San+Francisco",
+    "imageUrl": "https://picsum.photos/seed/liholiho/400/300"
+  },
+  {
+    "name": "Tartine Manufactory",
+    "address": "595 Alabama St, San Francisco, CA 94110",
+    "lat": 37.7616,
+    "lng": -122.4116,
+    "cuisine": "Bakery / American",
+    "rating": 4.5,
+    "priceLevel": "$$",
+    "description": "A massive, airy complex housing a legendary bakery, restaurant, and coffee shop. Famous for their incredible sourdough and seasonal toasts.",
+    "mapsUri": "https://www.google.com/maps/search/?api=1&query=Tartine+Manufactory+San+Francisco",
+    "imageUrl": "https://picsum.photos/seed/tartine/400/300"
+  }
+]

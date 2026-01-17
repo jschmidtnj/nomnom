@@ -1,2 +1,3 @@
-# nomnom
-nomnom.wiki
+# NomNom
+
+> Restaurant finder helper
