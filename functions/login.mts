@@ -1,5 +1,5 @@
 import type { Context, Config } from "@netlify/functions";
-import { checkCredentials, createJwt } from "./auth.ts";
+import { checkCredentials, createJwt } from "./src/auth.ts";
 
 const usernameJsonDataKey = "username";
 const passwordJsonDataKey = "password";

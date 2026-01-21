@@ -1,5 +1,5 @@
 import type { Context, Config } from "@netlify/functions";
-import { readRestaurants } from "./data_store.ts";
+import { readRestaurants } from "./src/data_store.ts";
 
 export default async (_req: Request, _context: Context) => {
   try {

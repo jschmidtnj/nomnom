@@ -1,7 +1,7 @@
 import type { Context, Config } from "@netlify/functions";
 import { CheerioAPI, load as htmlLoad } from "cheerio";
-import { RestaurantItem, readRestaurants, writeRestaurants } from "./data_store.ts";
-import { getJwt, validateJwt } from "./auth.ts";
+import { RestaurantItem, readRestaurants, writeRestaurants } from "./src/data_store.ts";
+import { getJwt, validateJwt } from "./src/auth.ts";
 
 const restaurantJsonDataKey = "data";
 
