@@ -32,6 +32,7 @@ const getUsers: () => User[] = () => {
   ];
 }
 
+// Compares two strings, timing-safe.
 const safeCompare = (a: string, b: string): boolean => {
   const bufferA = Buffer.from(a, 'utf16le');
   const bufferB = Buffer.from(b, 'utf16le');

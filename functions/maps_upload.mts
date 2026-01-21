@@ -9,6 +9,8 @@ const restaurantJsonDataKey = "data";
 const extractNewRestaurants = (htmlContent: CheerioAPI): RestaurantItem[] => {
   const result: RestaurantItem[] = [];
 
+  // TODO(joshua) - use CID here - https://stackoverflow.com/a/49374036 to get info about the place.
+
   htmlContent('div.restaurant-card').each((_, element) => {
     const name = htmlContent(element).find('h2.restaurant-name').text().trim();
     const address = htmlContent(element).find('p.restaurant-address').text().trim();
