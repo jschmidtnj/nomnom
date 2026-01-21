@@ -1,7 +1,7 @@
 {
-  "name": "copy-of-copy-of-copy-of-nom-nom---cheese-themed-restaurant-finder",
-  "private": true,
-  "version": "0.0.0",
+  "name": "nomnom.wiki",
+  "private": false,
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
