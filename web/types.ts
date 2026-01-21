@@ -14,8 +14,8 @@ export interface Restaurant {
   rating: number;
   priceLevel: string;
   description: string;
-  distance?: number; // In meters or kilometers
-  mapsUri?: string;
+  distance?: number;
+  mapsUrl?: string;
   imageUrl?: string;
 }
 
@@ -23,11 +23,4 @@ export enum SortOption {
   DISTANCE = 'Distance',
   RATING = 'Rating',
   PRICE = 'Price'
-}
-
-export interface GeminiGroundingChunk {
-  maps?: {
-    uri: string;
-    title: string;
-  };
 }

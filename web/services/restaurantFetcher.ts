@@ -3,7 +3,7 @@ import { Restaurant, Coordinates } from "../types";
 
 export const fetchRecommendedRestaurants = async (_coords: Coordinates): Promise<{ restaurants: Restaurant[], rawText: string }> => {
   try {
-    const response = await fetch('restaurants.json');
+    const response = await fetch('/api/restaurants.json');
     if (!response.ok) {
       throw new Error(`Failed to fetch restaurants: ${response.statusText}`);
     }

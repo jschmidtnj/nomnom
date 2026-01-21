@@ -57,9 +57,9 @@ const RestaurantCard: React.FC<Props> = ({ restaurant, isSelected, onClick }) =>
               <span className="truncate">{restaurant.address}</span>
             </div>
             
-            {restaurant.mapsUri && (
+            {restaurant.mapsUrl && (
               <a 
-                href={restaurant.mapsUri} 
+                href={restaurant.mapsUrl} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}

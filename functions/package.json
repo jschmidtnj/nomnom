@@ -1,0 +1,17 @@
+{
+  "name": "nomnom-functions",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "netlify dev"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^10.5.0",
+    "@netlify/functions": "^5.1.2",
+    "cheerio": "^1.1.2",
+    "jsonwebtoken": "^9.0.3"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10"
+  }
+}
