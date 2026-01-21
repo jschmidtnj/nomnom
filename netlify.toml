@@ -2,7 +2,6 @@
 package = "@netlify/plugin-nextjs"
 
 [build]
-base = "web"
 command = "cd functions && npm install && cd ../web && npm install && npm run build"
 publish = "dist"
 
