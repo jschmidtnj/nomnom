@@ -1,4 +1,5 @@
 import jsonwebtoken from "jsonwebtoken";
+import { timingSafeEqual } from "crypto";
 
 const adminUsername = Netlify.env.get("ADMIN_USERNAME");
 const adminPassword = Netlify.env.get("ADMIN_PASSWORD");
@@ -31,10 +32,27 @@ const getUsers: () => User[] = () => {
   ];
 }
 
+const safeCompare = (a: string, b: string): boolean => {
+  const bufferA = Buffer.from(a, 'utf16le');
+  const bufferB = Buffer.from(b, 'utf16le');
+
+  if (bufferA.length !== bufferB.length) {
+    return false;
+  }
+
+  return timingSafeEqual(bufferA, bufferB);
+}
+
 // Checks if the provided credentials match any user.
 export const checkCredentials = (username: string, password: string): boolean => {
   const users = getUsers();
-  return users.some(user => user.username === username && user.password === password);
+
+  for (const user of users) {
+    if (safeCompare(user.username, username) && safeCompare(user.password, password)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 // Creates a JWT for the given username.
