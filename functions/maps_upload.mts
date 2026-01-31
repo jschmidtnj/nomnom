@@ -73,8 +73,8 @@ export default async (req: Request, _context: Context) => {
     //   throw new Error("No restaurants found in the provided data");
     // }
 
-    const existingRestaurants = await readRestaurants();
-    console.log('existing restaurants count: ', existingRestaurants.length);
+    // const existingRestaurants = await readRestaurants();
+    // console.log('existing restaurants count: ', existingRestaurants.length);
     // newRestaurants = deduplicateRestaurants(existingRestaurants, newRestaurants);
     // if (newRestaurants.length === 0) {
     //   throw new Error("No new restaurants found in the provided data");
