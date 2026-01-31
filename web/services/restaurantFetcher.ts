@@ -7,7 +7,7 @@ export const fetchRecommendedRestaurants = async (_coords: Coordinates): Promise
     if (!response.ok) {
       throw new Error(`Failed to fetch restaurants: ${response.statusText}`);
     }
-    
+
     const data: Omit<Restaurant, 'id' | 'distance'>[] = await response.json();
 
     const restaurants: Restaurant[] = data.map((res, index) => ({

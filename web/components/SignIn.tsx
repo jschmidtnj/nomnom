@@ -12,14 +12,28 @@ const SignIn: React.FC<Props> = ({ onSignIn, onBack }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Mock authentication delay
-    setTimeout(() => {
+
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    });
+
+    if (!response.ok) {
       setLoading(false);
-      onSignIn(true);
-    }, 1500);
+      alert('Authentication failed. Please check your credentials.');
+      return;
+    }
+
+    const jsonData = await response.json();
+    console.log('login successful: ', jsonData);
+
+    onSignIn(true);
   };
 
   return (
