@@ -30,9 +30,7 @@ export const readRestaurants = async (): Promise<RestaurantItem[]> => {
 
   const restaurants: RestaurantItem[] = [];
   for (const restaurant of parsedRestaurants as RestaurantItem[]) {
-    if (!restaurant.name || !restaurant.address || !restaurant.lat || !restaurant.lng ||
-      !restaurant.cuisine || !restaurant.rating || !restaurant.priceLevel ||
-      !restaurant.description || !restaurant.mapsUrl || !restaurant.imageUrl) {
+    if (!restaurant.name || !restaurant.lat || !restaurant.lng || !restaurant.mapsUrl || !restaurant.imageUrl) {
       continue;
     }
     restaurants.push(restaurant);
