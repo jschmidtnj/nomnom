@@ -1,46 +1,46 @@
 import type { Context, Config } from "@netlify/functions";
-import { CheerioAPI, load as htmlLoad } from "cheerio";
+// import { CheerioAPI, load as htmlLoad } from "cheerio";
 import { RestaurantItem, readRestaurants, writeRestaurants } from "./src/data_store.ts";
 import { getJwt, validateJwt } from "./src/auth.ts";
 
 const restaurantJsonDataKey = "data";
 
 // Extracts restaurant data from the provided HTML content.
-const extractNewRestaurants = (htmlContent: CheerioAPI): RestaurantItem[] => {
-  const result: RestaurantItem[] = [];
+// const extractNewRestaurants = (htmlContent: CheerioAPI): RestaurantItem[] => {
+//   const result: RestaurantItem[] = [];
 
-  // TODO(joshua) - use CID here - https://stackoverflow.com/a/49374036 to get info about the place.
+//   // TODO(joshua) - use CID here - https://stackoverflow.com/a/49374036 to get info about the place.
 
-  htmlContent('div.restaurant-card').each((_, element) => {
-    const name = htmlContent(element).find('h2.restaurant-name').text().trim();
-    const address = htmlContent(element).find('p.restaurant-address').text().trim();
-    const lat = parseFloat(htmlContent(element).find('meta[itemprop="latitude"]').attr('content') || '0');
-    const lng = parseFloat(htmlContent(element).find('meta[itemprop="longitude"]').attr('content') || '0');
-    const cuisine = htmlContent(element).find('span.cuisine-type').text().trim();
-    const rating = parseFloat(htmlContent(element).find('span.rating-value').text().trim());
-    const priceLevel = htmlContent(element).find('span.price-level').text().trim();
-    const description = htmlContent(element).find('p.restaurant-description').text().trim();
-    const mapsUrl = htmlContent(element).find('a.maps-link').attr('href') || '';
-    const imageUrl = htmlContent(element).find('img.restaurant-image').attr('src') || '';
+//   htmlContent('div.restaurant-card').each((_, element) => {
+//     const name = htmlContent(element).find('h2.restaurant-name').text().trim();
+//     const address = htmlContent(element).find('p.restaurant-address').text().trim();
+//     const lat = parseFloat(htmlContent(element).find('meta[itemprop="latitude"]').attr('content') || '0');
+//     const lng = parseFloat(htmlContent(element).find('meta[itemprop="longitude"]').attr('content') || '0');
+//     const cuisine = htmlContent(element).find('span.cuisine-type').text().trim();
+//     const rating = parseFloat(htmlContent(element).find('span.rating-value').text().trim());
+//     const priceLevel = htmlContent(element).find('span.price-level').text().trim();
+//     const description = htmlContent(element).find('p.restaurant-description').text().trim();
+//     const mapsUrl = htmlContent(element).find('a.maps-link').attr('href') || '';
+//     const imageUrl = htmlContent(element).find('img.restaurant-image').attr('src') || '';
 
-    if (name && address && lat && lng && cuisine && rating && priceLevel && description && mapsUrl && imageUrl) {
-      result.push({
-        name,
-        address,
-        lat,
-        lng,
-        cuisine,
-        rating,
-        priceLevel,
-        description,
-        mapsUrl,
-        imageUrl
-      });
-    }
-  });
+//     if (name && address && lat && lng && cuisine && rating && priceLevel && description && mapsUrl && imageUrl) {
+//       result.push({
+//         name,
+//         address,
+//         lat,
+//         lng,
+//         cuisine,
+//         rating,
+//         priceLevel,
+//         description,
+//         mapsUrl,
+//         imageUrl
+//       });
+//     }
+//   });
 
-  return result;
-}
+//   return result;
+// }
 
 // Deduplicates restaurants based on their Maps URL.
 const deduplicateRestaurants = (existing: RestaurantItem[], extracted: RestaurantItem[]): RestaurantItem[] => {
@@ -65,20 +65,22 @@ export default async (req: Request, _context: Context) => {
       throw new Error("No restaurant data found in request");
     }
     const resturantDataStr: string = jsonData[restaurantJsonDataKey];
-    const restaurantHtml = htmlLoad(resturantDataStr);
+    console.log('found restaurant data string of length: ', resturantDataStr.length);
+    // const restaurantHtml = htmlLoad(resturantDataStr);
 
-    let newRestaurants = extractNewRestaurants(restaurantHtml);
-    if (newRestaurants.length === 0) {
-      throw new Error("No restaurants found in the provided data");
-    }
+    // let newRestaurants = extractNewRestaurants(restaurantHtml);
+    // if (newRestaurants.length === 0) {
+    //   throw new Error("No restaurants found in the provided data");
+    // }
 
     const existingRestaurants = await readRestaurants();
-    newRestaurants = deduplicateRestaurants(existingRestaurants, newRestaurants);
-    if (newRestaurants.length === 0) {
-      throw new Error("No new restaurants found in the provided data");
-    }
+    console.log('existing restaurants count: ', existingRestaurants.length);
+    // newRestaurants = deduplicateRestaurants(existingRestaurants, newRestaurants);
+    // if (newRestaurants.length === 0) {
+    //   throw new Error("No new restaurants found in the provided data");
+    // }
 
-    await writeRestaurants(existingRestaurants, newRestaurants);
+    // await writeRestaurants(existingRestaurants, newRestaurants);
 
     return new Response("Saved restaurants.");
   } catch (error) {
