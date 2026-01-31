@@ -7,6 +7,7 @@ const restaurantStore = getStore(restaurantStoreName);
 
 // Restaurant item structure.
 export interface RestaurantItem {
+  docid: string;
   name: string;
   address: string;
   lat: number;
