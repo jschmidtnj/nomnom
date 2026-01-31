@@ -6,15 +6,15 @@ import { calculateDistance } from './utils';
 import RestaurantCard from './components/RestaurantCard';
 import MapView from './components/MapView';
 import SignIn from './components/SignIn';
-import { 
-  Map as MapIcon, 
-  List as ListIcon, 
-  ChefHat, 
-  Search, 
-  Filter, 
-  Loader2, 
-  AlertCircle, 
-  Star, 
+import {
+  Map as MapIcon,
+  List as ListIcon,
+  ChefHat,
+  Search,
+  Filter,
+  Loader2,
+  AlertCircle,
+  Star,
   LogIn,
   LogOut,
   ShieldCheck,
@@ -30,10 +30,11 @@ const App: React.FC = () => {
   const [sortBy, setSortBy] = useState<SortOption>(SortOption.DISTANCE);
   const [viewMode, setViewMode] = useState<'split' | 'map' | 'list'>('split');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  
+
   // State for Authentication
   const [currentView, setCurrentView] = useState<'discovery' | 'signin'>('discovery');
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -44,6 +45,7 @@ const App: React.FC = () => {
           handleFetchRestaurants(coords);
         },
         (err) => {
+          console.error(err);
           setError("Location access denied. Please enable location to find restaurants near you.");
           const fallback = { lat: 37.7749, lng: -122.4194 };
           setUserLocation(fallback);
@@ -56,11 +58,43 @@ const App: React.FC = () => {
     }
   }, []);
 
+  const uploadFileRef = React.useRef<HTMLInputElement>(null);
+
+  const handleUploadFile = () => {
+    uploadFileRef.current.click();
+  };
+
+  const handleUploadFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const fileObj = event.target.files && event.target.files[0];
+    if (!fileObj) {
+      return;
+    }
+
+    console.log('Selected file:', fileObj);
+
+    const uploadResponse = await fetch('/api/upload', {
+      method: 'POST',
+      body: fileObj,
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+
+    if (!uploadResponse.ok) {
+      setError("File upload failed. Please try again.");
+      event.target.value = null;
+      return;
+    }
+
+    console.log('File uploaded successfully!');
+    event.target.value = null;
+  };
+
   const handleFetchRestaurants = async (coords: Coordinates) => {
     setLoading(true);
     try {
       const { restaurants: fetched } = await fetchRecommendedRestaurants(coords);
-      
+
       const enriched = fetched.map(res => ({
         ...res,
         distance: calculateDistance(coords, { lat: res.lat, lng: res.lng })
@@ -80,7 +114,7 @@ const App: React.FC = () => {
     // Fuzzy Keyword Search
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
-      result = result.filter(res => 
+      result = result.filter(res =>
         res.name.toLowerCase().includes(query) ||
         res.cuisine.toLowerCase().includes(query) ||
         res.description.toLowerCase().includes(query) ||
@@ -97,19 +131,23 @@ const App: React.FC = () => {
     });
   }, [restaurants, sortBy, searchQuery]);
 
-  const selectedRestaurant = useMemo(() => 
-    restaurants.find(r => r.id === selectedId), 
-  [restaurants, selectedId]);
+  const selectedRestaurant = useMemo(() =>
+    restaurants.find(r => r.id === selectedId),
+    [restaurants, selectedId]);
 
-  const handleSignIn = (success: boolean) => {
-    if (success) {
-      setIsAdmin(true);
-      setCurrentView('discovery');
+  const handleSignIn = (token: string) => {
+    if (!token) {
+      return;
     }
+
+    setIsAdmin(true);
+    setAccessToken(token);
+    setCurrentView('discovery');
   };
 
   const handleLogout = () => {
     setIsAdmin(false);
+    setAccessToken('');
     setCurrentView('discovery');
   };
 
@@ -143,15 +181,15 @@ const App: React.FC = () => {
         <div className="hidden lg:flex items-center gap-4 flex-1 max-w-xl mx-8">
           <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-            <input 
-              type="text" 
+            <input
+              type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search cuisine, name, or keywords..." 
+              placeholder="Search cuisine, name, or keywords..."
               className="w-full pl-10 pr-10 py-2 bg-gray-100 rounded-full text-sm text-gray-900 border-none focus:ring-2 focus:ring-amber-500/20 transition-all outline-none"
             />
             {searchQuery && (
-              <button 
+              <button
                 onClick={() => setSearchQuery('')}
                 className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-200 rounded-full transition-colors"
               >
@@ -163,14 +201,14 @@ const App: React.FC = () => {
 
         <div className="flex items-center gap-3">
           <div className="hidden md:flex items-center bg-gray-100 p-1 rounded-lg mr-2">
-            <button 
+            <button
               onClick={() => setViewMode('split')}
               className={`p-1.5 rounded ${viewMode === 'split' ? 'bg-white shadow text-amber-600' : 'text-gray-500 hover:text-gray-700'}`}
               title="Split View"
             >
               <ListIcon className="w-4 h-4" />
             </button>
-            <button 
+            <button
               onClick={() => setViewMode('map')}
               className={`p-1.5 rounded ${viewMode === 'map' ? 'bg-white shadow text-amber-600' : 'text-gray-500 hover:text-gray-700'}`}
               title="Map View"
@@ -178,11 +216,11 @@ const App: React.FC = () => {
               <MapIcon className="w-4 h-4" />
             </button>
           </div>
-          
+
           <div className="h-8 w-[1px] bg-gray-200 hidden md:block mr-2" />
 
           {isAdmin ? (
-            <button 
+            <button
               onClick={handleLogout}
               className="flex items-center gap-2 px-4 py-2 text-sm font-bold text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
             >
@@ -190,7 +228,7 @@ const App: React.FC = () => {
               <span className="hidden sm:inline">Logout</span>
             </button>
           ) : (
-            <button 
+            <button
               onClick={() => setCurrentView('signin')}
               className="flex items-center gap-2 bg-amber-50 hover:bg-amber-100 text-amber-600 px-4 py-2 rounded-full text-sm font-bold transition-all border border-amber-200"
             >
@@ -214,7 +252,7 @@ const App: React.FC = () => {
             <AlertCircle className="w-16 h-16 text-red-400 mb-4" />
             <h2 className="text-xl font-bold text-gray-900 mb-2">Oops! Something went wrong</h2>
             <p className="text-gray-500 max-w-md">{error}</p>
-            <button 
+            <button
               onClick={() => window.location.reload()}
               className="mt-6 px-6 py-2 bg-amber-500 text-white rounded-full font-bold hover:bg-amber-600 transition-colors"
             >
@@ -249,15 +287,15 @@ const App: React.FC = () => {
               <div className="p-4 lg:hidden border-b border-gray-100">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search keywords..." 
+                    placeholder="Search keywords..."
                     className="w-full pl-10 pr-10 py-2 bg-gray-100 rounded-full text-sm text-gray-900 border-none outline-none focus:ring-2 focus:ring-amber-500/20"
                   />
                   {searchQuery && (
-                    <button 
+                    <button
                       onClick={() => setSearchQuery('')}
                       className="absolute right-3 top-1/2 -translate-y-1/2 p-1"
                     >
@@ -270,12 +308,18 @@ const App: React.FC = () => {
               <div className="flex-1 overflow-y-auto custom-scrollbar">
                 {isAdmin && (
                   <div className="p-4 bg-amber-50 border-b border-amber-100">
-                    <button className="w-full py-2 bg-white border-2 border-dashed border-amber-300 rounded-xl text-amber-600 text-xs font-bold hover:border-amber-500 transition-all flex items-center justify-center gap-2">
+                    <input
+                      type="file"
+                      ref={uploadFileRef}
+                      onChange={handleUploadFileChange}
+                      style={{ display: 'none' }}
+                    />
+                    <button onClick={handleUploadFile} className="w-full py-2 bg-white border-2 border-dashed border-amber-300 rounded-xl text-amber-600 text-xs font-bold hover:border-amber-500 transition-all flex items-center justify-center gap-2">
                       + Upload Maps List
                     </button>
                   </div>
                 )}
-                
+
                 {filteredAndSortedRestaurants.length === 0 ? (
                   <div className="p-12 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <Search className="w-12 h-12 text-gray-200 mx-auto mb-4" />
@@ -283,7 +327,7 @@ const App: React.FC = () => {
                     <p className="text-gray-500 text-sm mt-1 px-4">
                       We couldn't find any restaurants matching "{searchQuery}". Try a different keyword or check your spelling.
                     </p>
-                    <button 
+                    <button
                       onClick={() => setSearchQuery('')}
                       className="mt-6 text-amber-600 font-bold text-sm hover:underline"
                     >
@@ -292,7 +336,7 @@ const App: React.FC = () => {
                   </div>
                 ) : (
                   filteredAndSortedRestaurants.map(res => (
-                    <RestaurantCard 
+                    <RestaurantCard
                       key={res.id}
                       restaurant={res}
                       isSelected={selectedId === res.id}
@@ -303,7 +347,7 @@ const App: React.FC = () => {
                     />
                   ))
                 )}
-                
+
                 <div className="p-8 text-center bg-gray-50">
                   <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Handpicked for your palette</p>
                 </div>
@@ -311,14 +355,14 @@ const App: React.FC = () => {
             </div>
 
             <div className={`flex-1 relative transition-all duration-300 ${viewMode === 'list' ? 'hidden' : 'block'}`}>
-              <MapView 
+              <MapView
                 userLocation={userLocation!}
                 restaurants={filteredAndSortedRestaurants}
                 selectedId={selectedId}
                 onRestaurantSelect={(id) => setSelectedId(id)}
               />
 
-              <button 
+              <button
                 onClick={() => setViewMode(viewMode === 'map' ? 'split' : 'map')}
                 className="md:hidden absolute bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-2xl z-50 flex items-center gap-2 font-bold text-sm active:scale-95 transition-transform"
               >
@@ -337,7 +381,7 @@ const App: React.FC = () => {
                         {selectedRestaurant.rating} • {selectedRestaurant.cuisine}
                       </div>
                       <p className="text-[10px] text-gray-500 mt-1 truncate">{selectedRestaurant.address}</p>
-                      <button 
+                      <button
                         onClick={() => setViewMode('split')}
                         className="mt-1 text-[10px] font-bold text-amber-600 underline"
                       >
@@ -359,7 +403,7 @@ const App: React.FC = () => {
         </div>
         <div className="flex items-center gap-3">
           {!isAdmin && (
-            <button 
+            <button
               onClick={() => setCurrentView('signin')}
               className="opacity-30 hover:opacity-100 transition-opacity uppercase tracking-widest font-black"
             >

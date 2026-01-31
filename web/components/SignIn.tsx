@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { ChefHat, Lock, User, ArrowLeft, Loader2 } from 'lucide-react';
 
 interface Props {
-  onSignIn: (success: boolean) => void;
+  onSignIn: (token: string) => void;
   onBack: () => void;
 }
 
@@ -31,14 +31,21 @@ const SignIn: React.FC<Props> = ({ onSignIn, onBack }) => {
     }
 
     const jsonData = await response.json();
-    console.log('login successful: ', jsonData);
+    const token = jsonData.token;
+    if (!token) {
+      setLoading(false);
+      alert('Authentication failed. No token received.');
+      return;
+    }
 
-    onSignIn(true);
+    console.log('login successful!');
+
+    onSignIn(token);
   };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4 animate-in fade-in duration-500">
-      <button 
+      <button
         onClick={onBack}
         className="absolute top-8 left-8 flex items-center gap-2 text-gray-500 hover:text-amber-600 font-medium transition-colors"
       >
@@ -61,8 +68,8 @@ const SignIn: React.FC<Props> = ({ onSignIn, onBack }) => {
               <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Username</label>
               <div className="relative">
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all text-gray-900"
@@ -76,8 +83,8 @@ const SignIn: React.FC<Props> = ({ onSignIn, onBack }) => {
               <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Password</label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input 
-                  type="password" 
+                <input
+                  type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all text-gray-900"
@@ -87,7 +94,7 @@ const SignIn: React.FC<Props> = ({ onSignIn, onBack }) => {
               </div>
             </div>
 
-            <button 
+            <button
               type="submit"
               disabled={loading}
               className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-amber-500/30 transition-all flex items-center justify-center gap-2 active:scale-[0.98] disabled:opacity-70"
