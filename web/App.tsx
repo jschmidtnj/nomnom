@@ -70,24 +70,40 @@ const App: React.FC = () => {
       return;
     }
 
-    console.log('Selected file:', fileObj);
+    const fileReader = new FileReader();
 
-    const uploadResponse = await fetch('/api/upload', {
-      method: 'POST',
-      body: fileObj,
-      headers: {
-        'Authorization': `Bearer ${accessToken}`
+    fileReader.onload = async (e) => {
+      const fileText = e.target.result;
+      console.log('File text:', fileText);
+
+      const uploadResponse = await fetch('/api/maps_upload', {
+        method: 'POST',
+        body: JSON.stringify({ data: fileText }),
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!uploadResponse.ok) {
+        setError("File upload failed. Please try again.");
+        event.target.value = null;
+        return;
       }
-    });
 
-    if (!uploadResponse.ok) {
-      setError("File upload failed. Please try again.");
+      console.log('File uploaded successfully!');
+      event.target.value = null;
+    };
+
+    fileReader.onerror = (e) => {
+      setError("File reading failed. Please try again.");
       event.target.value = null;
       return;
-    }
+    };
 
-    console.log('File uploaded successfully!');
-    event.target.value = null;
+    console.log('Selected file:', fileObj);
+
+    fileReader.readAsText(fileObj);
   };
 
   const handleFetchRestaurants = async (coords: Coordinates) => {
