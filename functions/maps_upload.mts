@@ -78,9 +78,9 @@ const extractNewRestaurants = (htmlContent: CheerioAPI): RestaurantItem[] => {
 
 // Deduplicates restaurants based on their Maps URL.
 const deduplicateRestaurants = (existing: RestaurantItem[], extracted: RestaurantItem[]): RestaurantItem[] => {
-  const existingSet = new Set(existing.map(r => r.mapsUrl));
+  const existingSet = new Set(existing.map(r => r.docid));
 
-  return extracted.filter(restaurant => !existingSet.has(restaurant.mapsUrl));
+  return extracted.filter(restaurant => !existingSet.has(restaurant.docid));
 }
 
 export default async (req: Request, _context: Context) => {
