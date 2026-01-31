@@ -20,6 +20,7 @@ import {
   ShieldCheck,
   X
 } from 'lucide-react';
+import { uploadRestaurants } from './services/restaurantUploader';
 
 const App: React.FC = () => {
   const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
@@ -34,7 +35,7 @@ const App: React.FC = () => {
   // State for Authentication
   const [currentView, setCurrentView] = useState<'discovery' | 'signin'>('discovery');
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [accessToken, setAccessToken] = useState<string>('');
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -74,24 +75,15 @@ const App: React.FC = () => {
 
     fileReader.onload = async (e) => {
       const fileText = e.target.result;
-      console.log('File text:', fileText);
+      const uploadData = await uploadRestaurants(fileText as string, accessToken);
 
-      const uploadResponse = await fetch('/api/maps_upload', {
-        method: 'POST',
-        body: JSON.stringify({ data: fileText }),
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!uploadResponse.ok) {
-        setError("File upload failed. Please try again.");
+      if (!uploadData.success) {
+        setError(uploadData.message);
         event.target.value = null;
         return;
       }
 
-      console.log('File uploaded successfully!');
+      console.log('File uploaded successfully:', uploadData.message);
       event.target.value = null;
     };
 
