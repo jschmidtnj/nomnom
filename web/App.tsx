@@ -261,7 +261,9 @@ const App: React.FC = () => {
             <h2 className="text-xl font-bold text-gray-900 mb-2">Oops! Something went wrong</h2>
             <p className="text-gray-500 max-w-md">{error}</p>
             <button
-              onClick={() => window.location.reload()}
+              onClick={() => {
+                setError(null);
+              }}
               className="mt-6 px-6 py-2 bg-amber-500 text-white rounded-full font-bold hover:bg-amber-600 transition-colors"
             >
               Try Again
