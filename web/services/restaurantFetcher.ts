@@ -1,9 +1,11 @@
 
 import { Restaurant, Coordinates } from "../types";
 
+const isLocal = false;
+
 export const fetchRecommendedRestaurants = async (_coords: Coordinates): Promise<{ restaurants: Restaurant[], rawText: string }> => {
   try {
-    const response = await fetch('/api/restaurants.json');
+    const response = await fetch((isLocal ? '' : '/api/') + 'restaurants.json');
     if (!response.ok) {
       throw new Error(`Failed to fetch restaurants: ${response.statusText}`);
     }
@@ -15,9 +17,9 @@ export const fetchRecommendedRestaurants = async (_coords: Coordinates): Promise
       id: `static-res-${index}`
     }));
 
-    return { 
-      restaurants, 
-      rawText: "This is a recoomended list of places to eat!" 
+    return {
+      restaurants,
+      rawText: "This is a recoomended list of places to eat!"
     };
   } catch (error) {
     console.error("Error fetching recommended restaurants:", error);

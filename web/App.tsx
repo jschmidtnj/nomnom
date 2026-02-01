@@ -22,8 +22,8 @@ import {
 } from 'lucide-react';
 import { uploadRestaurants } from './services/restaurantUploader';
 
-// Max distance, in meters.
-const maxDistance = 5000;
+// Max distance, in km.
+const maxDistance = 5;
 
 const App: React.FC = () => {
   const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
@@ -51,7 +51,7 @@ const App: React.FC = () => {
         (err) => {
           console.error(err);
           setError("Location access denied. Please enable location to find restaurants near you.");
-          const fallback = { lat: 37.7749, lng: -122.4194 };
+          const fallback = { lat: 40.7128, lng: 74.0060 };
           setUserLocation(fallback);
           handleFetchRestaurants(fallback);
         }
@@ -102,6 +102,15 @@ const App: React.FC = () => {
 
     fileReader.readAsText(fileObj);
   };
+
+  useEffect(() => {
+    if (selectedId) {
+      const element = document.getElementById(`restaurant-card-${selectedId}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+  }, [selectedId]);
 
   const handleFetchRestaurants = async (coords: Coordinates) => {
     setLoading(true);
@@ -355,8 +364,7 @@ const App: React.FC = () => {
                       key={res.id}
                       restaurant={res}
                       isSelected={selectedId === res.id}
-                      onClick={(evt) => {
-                        evt.preventDefault();
+                      onClick={() => {
                         setSelectedId(res.id);
                         if (window.innerWidth < 768) setViewMode('map');
                       }}

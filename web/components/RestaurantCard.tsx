@@ -12,14 +12,15 @@ interface Props {
 
 const RestaurantCard: React.FC<Props> = ({ restaurant, isSelected, onClick }) => {
   return (
-    <div 
+    <div
+      id={`restaurant-card-${restaurant.id}`}
       onClick={onClick}
       className={`group cursor-pointer p-4 transition-all duration-300 border-b border-gray-100 hover:bg-amber-50 ${isSelected ? 'bg-amber-50 border-l-4 border-l-amber-500' : 'bg-white'}`}
     >
       <div className="flex gap-4">
         <div className="w-24 h-24 flex-shrink-0 rounded-xl overflow-hidden shadow-sm relative">
-          <img 
-            src={restaurant.imageUrl} 
+          <img
+            src={restaurant.imageUrl}
             alt={restaurant.name}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
@@ -27,7 +28,7 @@ const RestaurantCard: React.FC<Props> = ({ restaurant, isSelected, onClick }) =>
             {restaurant.priceLevel}
           </div>
         </div>
-        
+
         <div className="flex-1 min-w-0">
           <div className="flex justify-between items-start">
             <h3 className="font-bold text-gray-900 truncate group-hover:text-amber-600 transition-colors">
@@ -40,7 +41,7 @@ const RestaurantCard: React.FC<Props> = ({ restaurant, isSelected, onClick }) =>
               </span>
             )}
           </div>
-          
+
           <div className="flex items-center gap-1 mt-1 text-sm font-medium text-amber-500">
             <Star className="w-4 h-4 fill-current" />
             <span>{restaurant.rating.toFixed(1)}</span>
@@ -56,11 +57,11 @@ const RestaurantCard: React.FC<Props> = ({ restaurant, isSelected, onClick }) =>
               <MapPin className="w-3 h-3 flex-shrink-0" />
               <span className="truncate">{restaurant.address}</span>
             </div>
-            
+
             {restaurant.mapsUrl && (
-              <a 
-                href={restaurant.mapsUrl} 
-                target="_blank" 
+              <a
+                href={restaurant.mapsUrl}
+                target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 className="p-1.5 text-gray-400 hover:text-amber-500 transition-colors"

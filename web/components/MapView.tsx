@@ -43,16 +43,26 @@ const MapView: React.FC<Props> = ({ userLocation, restaurants, selectedId, onRes
     });
     userMarkerRef.current = L.marker([userLocation.lat, userLocation.lng], { icon: userIcon }).addTo(mapRef.current);
 
-    return () => {};
+    return () => { };
   }, []);
+
+  // Effect for fitting bounds - only runs when the restaurant list itself changes or userLocation changes
+  useEffect(() => {
+    if (!mapRef.current || restaurants.length === 0) return;
+
+    const bounds = L.latLngBounds([userLocation.lat, userLocation.lng]);
+    restaurants.forEach(res => {
+      bounds.extend([res.lat, res.lng]);
+    });
+
+    mapRef.current.fitBounds(bounds, { padding: [50, 50] });
+  }, [restaurants, userLocation]);
 
   useEffect(() => {
     if (!mapRef.current) return;
 
     markersRef.current.forEach(m => m.remove());
     markersRef.current.clear();
-
-    const bounds = L.latLngBounds([userLocation.lat, userLocation.lng]);
 
     restaurants.forEach(res => {
       const isSelected = res.id === selectedId;
@@ -80,16 +90,18 @@ const MapView: React.FC<Props> = ({ userLocation, restaurants, selectedId, onRes
 
       const marker = L.marker([res.lat, res.lng], { icon: markerIcon })
         .addTo(mapRef.current)
-        .on('click', () => onRestaurantSelect(res.id));
-      
-      markersRef.current.set(res.id, marker);
-      bounds.extend([res.lat, res.lng]);
-    });
+        .on('click', (e: any) => {
+          L.DomEvent.stopPropagation(e);
+          onRestaurantSelect(res.id);
+        });
 
-    if (restaurants.length > 0) {
-      mapRef.current.fitBounds(bounds, { padding: [50, 50] });
-    }
-  }, [restaurants, selectedId, userLocation]);
+      markersRef.current.set(res.id, marker);
+
+      if (isSelected) {
+        mapRef.current.panTo([res.lat, res.lng], { animate: true });
+      }
+    });
+  }, [restaurants, selectedId]);
 
   return (
     <div id="map" className="w-full h-full relative group">
