@@ -19,10 +19,13 @@ const MapView: React.FC<Props> = ({ userLocation, restaurants, selectedId, onRes
 
   useEffect(() => {
     if (!mapRef.current) {
+      const isMobile = window.innerWidth < 768;
+      const initialZoom = isMobile ? 10 : 14;
+
       mapRef.current = L.map('map', {
         zoomControl: false,
         attributionControl: false
-      }).setView([userLocation.lat, userLocation.lng], 14);
+      }).setView([userLocation.lat, userLocation.lng], initialZoom);
 
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         maxZoom: 20
