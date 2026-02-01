@@ -20,7 +20,7 @@ const MapView: React.FC<Props> = ({ userLocation, restaurants, selectedId, onRes
   useEffect(() => {
     if (!mapRef.current) {
       const isMobile = window.innerWidth < 768;
-      const initialZoom = isMobile ? 10 : 14;
+      const initialZoom = isMobile ? 6 : 14;
 
       mapRef.current = L.map('map', {
         zoomControl: false,

@@ -149,7 +149,7 @@ export default async (req: Request, _context: Context) => {
     const existingRestaurants = await readRestaurants();
     newRestaurants = deduplicateRestaurants(existingRestaurants, newRestaurants);
     if (newRestaurants.length === 0) {
-      throw new Error("No new restaurants found in the provided data");
+      return new Response("No new restaurants found in the provided data.");
     }
 
     await writeRestaurants(existingRestaurants, newRestaurants);
