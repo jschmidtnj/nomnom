@@ -1,7 +1,7 @@
 
 import { Restaurant, Coordinates } from "../types";
 
-const isLocal = true;
+const isLocal = false;
 
 export const fetchRecommendedRestaurants = async (_coords: Coordinates): Promise<{ restaurants: Restaurant[], rawText: string }> => {
   try {
