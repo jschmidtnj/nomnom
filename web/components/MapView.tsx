@@ -43,10 +43,13 @@ const MapView: React.FC<Props> = ({ userLocation, restaurants, selectedId, onRes
     });
     userMarkerRef.current = L.marker([userLocation.lat, userLocation.lng], { icon: userIcon }).addTo(mapRef.current);
 
+    setTimeout(() => {
+      mapRef.current.invalidateSize();
+    }, 250);
+
     return () => { };
   }, []);
 
-  // Effect for fitting bounds - only runs when the restaurant list itself changes or userLocation changes
   useEffect(() => {
     if (!mapRef.current || restaurants.length === 0) return;
 
