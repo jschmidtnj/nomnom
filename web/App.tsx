@@ -24,7 +24,7 @@ import {
 import { deleteRestaurants, uploadRestaurants } from './services/restaurantUploader';
 
 // Max distance, in km.
-const maxDistance = 5;
+const maxDistance = 10;
 
 const App: React.FC = () => {
   const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
@@ -430,7 +430,7 @@ const App: React.FC = () => {
                   }
                   resetMap();
                 }}
-                className="md:hidden absolute bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-2xl z-50 flex items-center gap-2 font-bold text-sm active:scale-95 transition-transform"
+                className="md:hidden absolute bottom-20 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-2xl z-50 flex items-center gap-2 font-bold text-sm active:scale-95 transition-transform"
               >
                 {viewMode === 'map' ? <ListIcon className="w-4 h-4" /> : <MapIcon className="w-4 h-4" />}
                 {viewMode === 'map' ? 'Show List' : 'Show Map'}
