@@ -11,8 +11,9 @@ interface Props {
 
 declare const L: any;
 
-const MapView: React.FC<Props> = ({ userLocation, restaurants, selectedId, onRestaurantSelect }) => {
+const MapView: React.FC<Props> = ({ userLocation, restaurants, selectedId, onRestaurantSelect, setMapRef }) => {
   const mapRef = useRef<any>(null);
+  setMapRef(mapRef);
   const markersRef = useRef<Map<string, any>>(new Map());
   const userMarkerRef = useRef<any>(null);
 

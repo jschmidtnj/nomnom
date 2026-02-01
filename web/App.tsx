@@ -34,6 +34,16 @@ const App: React.FC = () => {
   const [sortBy, setSortBy] = useState<SortOption>(SortOption.DISTANCE);
   const [viewMode, setViewMode] = useState<'split' | 'map' | 'list'>('split');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  let mapRef = null;
+
+  const resetMap = () => {
+    if (!mapRef) {
+      return;
+    }
+    setTimeout(() => {
+      mapRef.current.invalidateSize();
+    }, 500);
+  };
 
   // State for Authentication
   const [currentView, setCurrentView] = useState<'discovery' | 'signin'>('discovery');
@@ -366,7 +376,10 @@ const App: React.FC = () => {
                       isSelected={selectedId === res.id}
                       onClick={() => {
                         setSelectedId(res.id);
-                        if (window.innerWidth < 768) setViewMode('map');
+                        if (window.innerWidth < 768) {
+                          setViewMode('map');
+                        }
+                        resetMap();
                       }}
                     />
                   ))
@@ -384,10 +397,18 @@ const App: React.FC = () => {
                 restaurants={filteredAndSortedRestaurants}
                 selectedId={selectedId}
                 onRestaurantSelect={(id) => setSelectedId(id)}
+                setMapRef={(ref) => mapRef = ref}
               />
 
               <button
-                onClick={() => setViewMode(viewMode === 'map' ? 'split' : 'map')}
+                onClick={() => {
+                  const newViewMode = viewMode === 'map' ? 'split' : 'map';
+                  setViewMode(newViewMode);
+                  if (newViewMode !== 'map') {
+                    return;
+                  }
+                  resetMap();
+                }}
                 className="md:hidden absolute bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-2xl z-50 flex items-center gap-2 font-bold text-sm active:scale-95 transition-transform"
               >
                 {viewMode === 'map' ? <ListIcon className="w-4 h-4" /> : <MapIcon className="w-4 h-4" />}
