@@ -17,10 +17,11 @@ const MapView: React.FC<Props> = ({ userLocation, restaurants, selectedId, onRes
   const markersRef = useRef<Map<string, any>>(new Map());
   const userMarkerRef = useRef<any>(null);
 
+  const isMobile = () => window.innerWidth < 768;
+
   useEffect(() => {
     if (!mapRef.current) {
-      const isMobile = window.innerWidth < 768;
-      const initialZoom = isMobile ? 6 : 14;
+      const initialZoom = isMobile() ? 12 : 15;
 
       mapRef.current = L.map('map', {
         zoomControl: false,
@@ -62,7 +63,10 @@ const MapView: React.FC<Props> = ({ userLocation, restaurants, selectedId, onRes
       bounds.extend([res.lat, res.lng]);
     });
 
-    mapRef.current.fitBounds(bounds, { padding: [50, 50] });
+    mapRef.current.fitBounds(bounds, {
+      padding: isMobile() ? [80, 80] : [60, 60],
+      maxZoom: isMobile() ? 12 : 15
+    });
   }, [restaurants, userLocation]);
 
   useEffect(() => {
