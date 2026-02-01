@@ -84,11 +84,13 @@ const App: React.FC = () => {
       }
 
       console.log('File uploaded successfully:', uploadData.message);
+      alert('File Uploaded!');
       event.target.value = null;
     };
 
-    fileReader.onerror = (e) => {
+    fileReader.onerror = (err) => {
       setError("File reading failed. Please try again.");
+      console.error(err);
       event.target.value = null;
       return;
     };
