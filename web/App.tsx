@@ -358,7 +358,7 @@ const App: React.FC = () => {
                       onClick={(evt) => {
                         evt.preventDefault();
                         setSelectedId(res.id);
-                        if (window.innerWidth < 768) setViewMode('map');
+                        // if (window.innerWidth < 768) setViewMode('map');
                       }}
                     />
                   ))
