@@ -42,7 +42,7 @@ const getOrFetchPlaceData = async (docId: string, placesData: Record<string, any
 
 // Extracts restaurant data from the provided HTML content.
 const extractNewRestaurants = async (htmlContent: CheerioAPI, placesData: Record<string, any>): Promise<RestaurantItem[]> => {
-  const result: RestaurantItem[] = [];
+  let result: RestaurantItem[] = [];
 
   htmlContent('a').each((_, element) => {
     const href = htmlContent(element).attr('href') || '';
@@ -94,7 +94,7 @@ const extractNewRestaurants = async (htmlContent: CheerioAPI, placesData: Record
     }
   });
 
-  return await Promise.all(result.map(async (restaurant) => {
+  result = await Promise.all(result.map(async (restaurant) => {
     const placeData = await getOrFetchPlaceData(restaurant.docid, placesData);
 
     restaurant.placeId = placeData.place_id;
@@ -107,6 +107,10 @@ const extractNewRestaurants = async (htmlContent: CheerioAPI, placesData: Record
 
     return restaurant;
   }));
+
+  return result.filter((currItem, i, self) =>
+    i === self.findIndex((otherItem) => otherItem.docid === currItem.docid)
+  );
 }
 
 // Deduplicates restaurants based on their Maps URL.
