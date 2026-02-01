@@ -83,7 +83,7 @@ const MapView: React.FC<Props> = ({ userLocation, restaurants, selectedId, onRes
         .on('click', () => onRestaurantSelect(res.id));
       
       markersRef.current.set(res.id, marker);
-      bounds.extend([res.lat, res.lng]);
+      // bounds.extend([res.lat, res.lng]);
     });
 
     if (restaurants.length > 0) {
