@@ -22,6 +22,9 @@ import {
 } from 'lucide-react';
 import { uploadRestaurants } from './services/restaurantUploader';
 
+// Max distance, in meters.
+const maxDistance = 5000;
+
 const App: React.FC = () => {
   const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
@@ -108,7 +111,7 @@ const App: React.FC = () => {
       const enriched = fetched.map(res => ({
         ...res,
         distance: calculateDistance(coords, { lat: res.lat, lng: res.lng })
-      }));
+      })).filter(res => res.distance < maxDistance);
 
       setRestaurants(enriched);
     } catch (err) {
