@@ -1,28 +1,61 @@
 import type { Context, Config } from "@netlify/functions";
 import { CheerioAPI, load as htmlLoad } from "cheerio";
-import { RestaurantItem, readRestaurants, writeRestaurants } from "./src/data_store.ts";
+import { RestaurantItem, readPlaces, readRestaurants, writePlaces, writeRestaurants } from "./src/data_store.ts";
 import { getJwt, validateJwt } from "./src/auth.ts";
 
 const restaurantJsonDataKey = "data";
 
-// Extracts restaurant data from the provided HTML content.
-const extractNewRestaurants = (htmlContent: CheerioAPI): RestaurantItem[] => {
-  const result: RestaurantItem[] = [];
+const placesApiKey = Netlify.env.get("PLACES_API_KEY");
 
-  // TODO(joshua) - use CID here - https://stackoverflow.com/a/49374036 to get info about the place.
+// Fetches place data from Google Places API using the provided docId.
+const fetchPlaceData = async (docId: string): Promise<Record<string, any>> => {
+  const url = `https://maps.googleapis.com/maps/api/place/details/json?cid=${docId}&key=${placesApiKey}`;
+
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch place data: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  if (!data.result) {
+    return new Error('Cannot find any places data.');
+  }
+
+  return data.result;
+}
+
+// Gets the place data from cache or fetches it if not present.
+const getOrFetchPlaceData = async (docId: string, placesData: Record<string, any>): Promise<Record<string, any>> => {
+  if (docId in placesData) {
+    return placesData[docId];
+  }
+
+  try {
+    placesData[docId] = await fetchPlaceData(docId);
+    return placesData[docId];
+  } catch (error) {
+    console.error('Error fetching places data:', error);
+  }
+
+  return {};
+}
+
+// Extracts restaurant data from the provided HTML content.
+const extractNewRestaurants = async (htmlContent: CheerioAPI, placesData: Record<string, any>): Promise<RestaurantItem[]> => {
+  const result: RestaurantItem[] = [];
 
   htmlContent('a').each((_, element) => {
     const href = htmlContent(element).attr('href') || '';
     if (!href.startsWith('https://www.google.com/search')) {
       return;
     }
-    // TODO(joshua) - make this the correct maps URL.
-    const mapsUrl = href;
+
     const nameMatch = href.match(/q=([^&]+)/);
     if (!nameMatch) {
       console.error('no name match!')
       return;
     }
+
     const name = decodeURIComponent(nameMatch[1]);
     const docidMatch = href.match(/ludocid=(\d+)/);
     if (!docidMatch) {
@@ -30,50 +63,50 @@ const extractNewRestaurants = (htmlContent: CheerioAPI): RestaurantItem[] => {
       return;
     }
     const docid = docidMatch[1];
+    const mapsUrl = `https://maps.google.com/?cid=${docid}`;
 
     const ratingText = (htmlContent(element).find('[aria-label*="Rated "]').attr('aria-label') || '').trim();
     console.log('ratingText: ', ratingText);
     const ratingMatch = ratingText.match(/Rated (\d+(\.\d+)?) out of 5/);
     const rating = ratingMatch ? parseFloat(ratingMatch[1]) : 0;
 
-    // TODO(joshua) - description is broken, need to fix.
-    const descriptionText = htmlContent(element).find('div:contains("&nbsp;")').next().text().trim();
-    console.log('descriptionText:', descriptionText);
-    const numDollarSigns = descriptionText.split('$').length - 1;
-    const priceLevel = '$'.repeat(numDollarSigns);
-    const description = descriptionText.replaceAll('&nbsp;', '').replaceAll('·', '').replaceAll('$', '').trim();
-    const cuisine = description.split(',')[0] || '';
-
     const imageElement = htmlContent(element).find('img').filter((_, img) => {
       const src = htmlContent(img).attr('src') || '';
       return src.startsWith('https://lh3.googleusercontent.com');
     }).first();
     const imageUrl = imageElement.attr('src') || '';
-    console.log('imageUrl: ', imageUrl);
-
-    // TODO(joshua) - add the correct address etc.
-    const address = 'Address not available';
-    const lat = 40.0;
-    const lng = -74.0;
 
     if (docid && name && mapsUrl && imageUrl) {
       result.push({
         docid,
+        placeId: 'unknown',
         name,
-        address,
-        lat,
-        lng,
-        cuisine,
+        address: 'unknown',
+        lat: 0.0,
+        lng: 0.0,
+        cuisine: 'unknown',
         rating,
-        priceLevel,
-        description,
+        priceLevel: 'unknown',
+        description: 'unknown',
         mapsUrl,
         imageUrl
       });
     }
   });
 
-  return result;
+  return await Promise.all(result.map(async (restaurant) => {
+    const placeData = await getOrFetchPlaceData(restaurant.docid, placesData);
+
+    restaurant.placeId = placeData.place_id;
+    restaurant.address = placeData.formatted_address || 'Address not available';
+    restaurant.lat = placeData.geometry?.location?.lat || 0;
+    restaurant.lng = placeData.geometry?.location?.lng || 0;
+    restaurant.description = placeData.editorial_summary?.overview || 'No description available';
+    restaurant.priceLevel = placeData.price_level ? '$'.repeat(placeData.price_level) : 'N/A';
+    restaurant.cuisine = placeData.types ? placeData.types.join(', ') : 'N/A';
+
+    return restaurant;
+  }));
 }
 
 // Deduplicates restaurants based on their Maps URL.
@@ -101,7 +134,10 @@ export default async (req: Request, _context: Context) => {
     const resturantDataStr: string = jsonData[restaurantJsonDataKey];
     const restaurantHtml = htmlLoad(resturantDataStr);
 
-    let newRestaurants = extractNewRestaurants(restaurantHtml);
+    const placesData = await readPlaces();
+    let newRestaurants = await extractNewRestaurants(restaurantHtml, placesData);
+    await writePlaces(placesData);
+
     if (newRestaurants.length === 0) {
       throw new Error("No restaurants found in the provided data");
     }

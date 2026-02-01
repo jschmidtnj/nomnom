@@ -2,12 +2,16 @@ import { getStore } from "@netlify/blobs";
 
 const restaurantStoreName = "restaurant_data";
 const restaurantDataKey = "restaurants_list.json";
+const placesStoreName = "places_data";
+const placesDataKey = "places.json";
 
 const restaurantStore = getStore(restaurantStoreName);
+const placesStore = getStore(placesStoreName);
 
 // Restaurant item structure.
 export interface RestaurantItem {
   docid: string;
+  placeId: string;
   name: string;
   address: string;
   lat: number;
@@ -45,4 +49,21 @@ export const writeRestaurants = async (existing: RestaurantItem[], extracted: Re
   const restaurantsStr = JSON.stringify(restaurants, null, 2);
 
   await restaurantStore.set(restaurantDataKey, restaurantsStr, { metadata: { updatedAt: new Date().toISOString() } });
+}
+
+// Reads the list of places data from blob store.
+export const readPlaces = async (): Promise<Record<string, any>> => {
+  const placesStr = await placesStore.get(placesDataKey, { type: 'text' });
+  if (!placesStr) {
+    return [];
+  }
+
+  return JSON.parse(placesStr);
+}
+
+// Writes the places data to blob store.
+export const writePlaces = async (places: Record<string, any>): Promise<void> => {
+  const placesStr = JSON.stringify(places, null, 2);
+
+  await placesStore.set(placesDataKey, placesStr, { metadata: { updatedAt: new Date().toISOString() } });
 }
