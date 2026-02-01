@@ -5,9 +5,6 @@ const restaurantDataKey = "restaurants_list.json";
 const placesStoreName = "places_data";
 const placesDataKey = "places.json";
 
-const restaurantStore = getStore(restaurantStoreName);
-const placesStore = getStore(placesStoreName);
-
 // Restaurant item structure.
 export interface RestaurantItem {
   docid: string;
@@ -26,7 +23,7 @@ export interface RestaurantItem {
 
 // Gets the current list of restaurants from the blob store.
 export const readRestaurants = async (): Promise<RestaurantItem[]> => {
-  const restaurantsStr = await restaurantStore.get(restaurantDataKey, { type: 'text' });
+  const restaurantsStr = await getStore(restaurantStoreName).get(restaurantDataKey, { type: 'text' });
   if (!restaurantsStr) {
     return [];
   }
@@ -48,12 +45,12 @@ export const writeRestaurants = async (existing: RestaurantItem[], extracted: Re
   const restaurants = [...extracted, ...existing];
   const restaurantsStr = JSON.stringify(restaurants, null, 2);
 
-  await restaurantStore.set(restaurantDataKey, restaurantsStr, { metadata: { updatedAt: new Date().toISOString() } });
+  await getStore(restaurantStoreName).set(restaurantDataKey, restaurantsStr, { metadata: { updatedAt: new Date().toISOString() } });
 }
 
 // Reads the list of places data from blob store.
 export const readPlaces = async (): Promise<Record<string, any>> => {
-  const placesStr = await placesStore.get(placesDataKey, { type: 'text' });
+  const placesStr = await getStore(placesStoreName).get(placesDataKey, { type: 'text' });
   if (!placesStr) {
     return [];
   }
@@ -65,5 +62,5 @@ export const readPlaces = async (): Promise<Record<string, any>> => {
 export const writePlaces = async (places: Record<string, any>): Promise<void> => {
   const placesStr = JSON.stringify(places, null, 2);
 
-  await placesStore.set(placesDataKey, placesStr, { metadata: { updatedAt: new Date().toISOString() } });
+  await getStore(placesStoreName).set(placesDataKey, placesStr, { metadata: { updatedAt: new Date().toISOString() } });
 }
