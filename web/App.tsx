@@ -16,11 +16,12 @@ import {
   AlertCircle,
   Star,
   LogIn,
+  Trash2,
   LogOut,
   ShieldCheck,
   X
 } from 'lucide-react';
-import { uploadRestaurants } from './services/restaurantUploader';
+import { deleteRestaurants, uploadRestaurants } from './services/restaurantUploader';
 
 // Max distance, in km.
 const maxDistance = 5;
@@ -76,6 +77,19 @@ const App: React.FC = () => {
 
   const handleUploadFile = () => {
     uploadFileRef.current.click();
+  };
+
+  const handleDeleteAll = async () => {
+    if (!window.confirm("Are you sure you want to delete all restaurants? This action cannot be undone.")) {
+      return;
+    }
+    const deleteResult = await deleteRestaurants(accessToken);
+    if (!deleteResult.success) {
+      setError(deleteResult.message);
+      return;
+    }
+    setRestaurants([]);
+    setSelectedId(null);
   };
 
   const handleUploadFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -350,6 +364,13 @@ const App: React.FC = () => {
                     />
                     <button onClick={handleUploadFile} className="w-full py-2 bg-white border-2 border-dashed border-amber-300 rounded-xl text-amber-600 text-xs font-bold hover:border-amber-500 transition-all flex items-center justify-center gap-2">
                       + Upload Maps List
+                    </button>
+                    <button
+                      onClick={handleDeleteAll}
+                      className="w-full py-2 bg-red-50 border-2 border-dashed border-red-200 rounded-xl text-red-600 text-xs font-bold hover:border-red-400 transition-all flex items-center justify-center gap-2"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      Delete All
                     </button>
                   </div>
                 )}

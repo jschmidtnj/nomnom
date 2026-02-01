@@ -52,3 +52,27 @@ export const uploadRestaurants = async (fileText: string, accessToken: string): 
     };
   }
 };
+
+// Delete all restaurants from the list.
+export const deleteRestaurants = async (accessToken: string): Promise<{ success: boolean, message: string }> => {
+  try {
+    const deleteResponse = await fetch('/api/delete_restaurants', {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+    if (!deleteResponse.ok) {
+      throw new Error(`Failed to delete restaurants: ${deleteResponse.statusText}`);
+    }
+
+    return { success: true, message: "Restaurants deleted successfully." };
+  } catch (error) {
+    console.error("Error deleting restaurants:", error);
+
+    return {
+      success: false,
+      message: `Failed to delete restaurants: ${error instanceof Error ? error.message : "Unknown error"}`
+    };
+  }
+};
