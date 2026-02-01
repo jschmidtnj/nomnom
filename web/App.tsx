@@ -355,7 +355,8 @@ const App: React.FC = () => {
                       key={res.id}
                       restaurant={res}
                       isSelected={selectedId === res.id}
-                      onClick={() => {
+                      onClick={(evt) => {
+                        evt.preventDefault();
                         setSelectedId(res.id);
                         if (window.innerWidth < 768) setViewMode('map');
                       }}
